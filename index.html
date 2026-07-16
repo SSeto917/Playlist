@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#10100f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="留白放映室">
   <title>留白放映室</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="pwa-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://www.youtube-nocookie.com">
   <link rel="preconnect" href="https://i.ytimg.com">
   <link rel="stylesheet" href="styles.css">
@@ -18,11 +24,12 @@
       <span>留白放映室</span>
     </a>
     <div class="top-actions">
+      <button id="install-button" class="install-button" type="button" hidden>安裝 App</button>
       <div class="level-chip" aria-label="目前等級">
         <span class="level-number" id="user-level">1</span>
         <span><small>LEVEL</small><strong id="level-label">放映新手</strong></span>
       </div>
-      <div class="status"><span></span> 只在這裡看</div>
+      <div class="status"><span></span> <b id="connection-label">只在這裡看</b></div>
     </div>
   </header>
 
@@ -63,9 +70,14 @@
             <p class="meta-label">NOW PLAYING</p>
             <h2 id="now-title">尚未選擇影片</h2>
           </div>
-          <button id="focus-button" class="icon-button" type="button" aria-label="專注模式" title="專注模式">
-            <span class="focus-corners"></span>
-          </button>
+          <div class="player-actions">
+            <button id="repeat-button" class="icon-button repeat-button" type="button" aria-label="自動重複播放" aria-pressed="false" title="自動重複播放">
+              <span class="repeat-symbol">↻</span>
+            </button>
+            <button id="focus-button" class="icon-button" type="button" aria-label="專注模式" title="專注模式">
+              <span class="focus-corners"></span>
+            </button>
+          </div>
         </div>
 
         <div class="experience-panel">

@@ -14,6 +14,7 @@ const queueEmpty = document.querySelector("#queue-empty");
 const queueCount = document.querySelector("#queue-count");
 const clearButton = document.querySelector("#clear-button");
 const focusButton = document.querySelector("#focus-button");
+const repeatButton = document.querySelector("#repeat-button");
 const template = document.querySelector("#queue-item-template");
 const userLevel = document.querySelector("#user-level");
 const levelLabel = document.querySelector("#level-label");
@@ -23,6 +24,9 @@ const xpNeeded = document.querySelector("#xp-needed");
 const xpBar = document.querySelector("#xp-bar");
 const watchedCount = document.querySelector("#watched-count");
 const rewardToast = document.querySelector("#reward-toast");
+const installButton = document.querySelector("#install-button");
+const connectionLabel = document.querySelector("#connection-label");
+const connectionStatus = document.querySelector(".status");
 
 let items = loadItems();
 let activeId = items[0]?.uid ?? null;
@@ -33,6 +37,8 @@ let pendingItem = null;
 let awardedForCycle = false;
 let lastPlayingVideoId = null;
 let toastTimer = null;
+let installPrompt = null;
+let repeatEnabled = localStorage.getItem("quiet-watch-repeat") === "true";
 
 function loadItems() {
   try {
@@ -159,6 +165,13 @@ function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.ENDED && !awardedForCycle) {
     awardedForCycle = true;
     awardCompletion();
+    if (repeatEnabled) {
+      setTimeout(() => {
+        if (!ytPlayer || typeof ytPlayer.seekTo !== "function") return;
+        ytPlayer.seekTo(0, true);
+        ytPlayer.playVideo();
+      }, 700);
+    }
   }
 }
 
@@ -313,6 +326,22 @@ focusButton.addEventListener("click", async () => {
   try { await document.documentElement.requestFullscreen(); } catch {}
 });
 
+function renderRepeatButton() {
+  repeatButton.classList.toggle("active", repeatEnabled);
+  repeatButton.setAttribute("aria-pressed", String(repeatEnabled));
+  repeatButton.title = repeatEnabled ? "關閉自動重複播放" : "開啟自動重複播放";
+}
+
+repeatButton.addEventListener("click", () => {
+  repeatEnabled = !repeatEnabled;
+  localStorage.setItem("quiet-watch-repeat", String(repeatEnabled));
+  renderRepeatButton();
+  message.textContent = repeatEnabled ? "已開啟自動重複播放。" : "已關閉自動重複播放。";
+  setTimeout(() => {
+    if (message.textContent.includes("自動重複播放")) message.textContent = "";
+  }, 2200);
+});
+
 document.addEventListener("fullscreenchange", () => {
   if (!document.fullscreenElement) document.body.classList.remove("focus-mode");
 });
@@ -331,3 +360,41 @@ if (activeId) {
 
 renderProgress();
 renderQueue();
+renderRepeatButton();
+
+function updateConnectionStatus() {
+  const online = navigator.onLine;
+  connectionLabel.textContent = online ? "只在這裡看" : "離線模式";
+  connectionStatus.classList.toggle("offline", !online);
+}
+
+window.addEventListener("online", updateConnectionStatus);
+window.addEventListener("offline", updateConnectionStatus);
+updateConnectionStatus();
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  installPrompt = event;
+  installButton.hidden = false;
+});
+
+installButton.addEventListener("click", async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  installButton.hidden = true;
+});
+
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  installButton.hidden = true;
+});
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(error => {
+      console.warn("Service worker registration failed:", error);
+    });
+  });
+}

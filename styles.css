@@ -81,6 +81,21 @@ button { color: inherit; }
   color: var(--muted);
 }
 
+.status b { font-weight: 400; }
+.status.offline span { background: #a4a096; box-shadow: 0 0 0 4px rgba(164,160,150,.12); }
+
+.install-button {
+  height: 35px;
+  padding: 0 14px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  transition: background .2s, color .2s;
+}
+
+.install-button:hover { background: var(--ink); color: var(--paper); }
+
 .top-actions { display: flex; align-items: center; gap: 28px; }
 
 .level-chip {
@@ -223,10 +238,48 @@ h1 em { color: var(--signal); font-weight: 400; }
 }
 
 .screen {
+  position: relative;
   aspect-ratio: 16 / 9;
   background: var(--dark);
-  box-shadow: 0 22px 50px rgba(24, 22, 17, .16);
+  border: 6px solid var(--ink);
+  outline: 9px solid #f6cf3f;
+  box-shadow:
+    0 0 0 14px var(--ink),
+    15px 15px 0 14px var(--signal),
+    0 28px 56px rgba(24, 22, 17, .2);
   overflow: hidden;
+  margin: 14px 14px 34px;
+  width: calc(100% - 28px);
+}
+
+.screen::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+  border: 5px solid rgba(255,255,255,.9);
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.screen::after {
+  content: "PLAY!";
+  position: absolute;
+  z-index: 4;
+  top: 13px;
+  right: 15px;
+  padding: 5px 8px 4px;
+  border: 2px solid var(--ink);
+  background: #f6cf3f;
+  color: var(--ink);
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(10px, 1.2vw, 15px);
+  font-style: italic;
+  letter-spacing: .08em;
+  line-height: 1;
+  transform: rotate(3deg);
+  pointer-events: none;
+  box-shadow: 3px 3px 0 var(--signal);
 }
 
 .player-host, .player-host iframe { width: 100%; height: 100%; border: 0; }
@@ -280,6 +333,17 @@ h1 em { color: var(--signal); font-weight: 400; }
   border: 1px solid var(--line);
   background: transparent;
   cursor: pointer;
+}
+
+.player-actions { display: flex; gap: 8px; }
+.repeat-symbol { display: block; font-size: 22px; line-height: 1; transform: translateY(-1px); }
+.repeat-button { transition: background .2s, border-color .2s, color .2s; }
+.repeat-button.active { border-color: var(--signal); background: var(--signal); color: white; }
+.repeat-button.active .repeat-symbol { animation: repeat-pulse 1.8s ease-in-out infinite; }
+
+@keyframes repeat-pulse {
+  0%, 100% { transform: translateY(-1px) rotate(0); }
+  50% { transform: translateY(-1px) rotate(28deg); }
 }
 
 .focus-corners { display: block; width: 15px; height: 15px; margin: auto; border: 2px solid var(--ink); border-top-color: transparent; border-bottom-color: transparent; }
@@ -398,7 +462,15 @@ body.focus-mode .topbar, body.focus-mode .hero, body.focus-mode .queue-panel, bo
 body.focus-mode main { padding: 0; }
 body.focus-mode .watch-layout { display: block; padding: 0; }
 body.focus-mode .screen-column { width: 100vw; height: 100vh; display: grid; place-items: center; }
-body.focus-mode .screen { width: 100vw; max-height: 100vh; box-shadow: none; }
+body.focus-mode .screen {
+  width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+body.focus-mode .screen::before, body.focus-mode .screen::after { display: none; }
 
 @media (max-width: 900px) {
   .add-form { grid-template-columns: 1fr auto; }
@@ -412,8 +484,16 @@ body.focus-mode .screen { width: 100vw; max-height: 100vh; box-shadow: none; }
   .topbar { height: 68px; }
   .status { display: none; }
   .top-actions { gap: 0; }
+  .install-button { margin-right: 12px; }
   .level-chip { border-right: 0; padding-right: 0; }
   .hero { padding-top: 62px; }
+  .screen {
+    margin: 9px 9px 25px;
+    width: calc(100% - 18px);
+    border-width: 4px;
+    outline-width: 5px;
+    box-shadow: 0 0 0 9px var(--ink), 9px 9px 0 9px var(--signal), 0 20px 38px rgba(24,22,17,.18);
+  }
   h1 { font-size: clamp(48px, 14vw, 70px); }
   .add-form { display: flex; flex-direction: column; border: 0; background: transparent; gap: 9px; }
   .url-field, .title-field { border: 1px solid var(--ink); background: rgba(255,255,255,.2); }
@@ -427,4 +507,5 @@ body.focus-mode .screen { width: 100vw; max-height: 100vh; box-shadow: none; }
 
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+  .repeat-button.active .repeat-symbol { animation: none; }
 }
