@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10100f">
+  <title>留白放映室</title>
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="回到頂部">
+      <span class="brand-mark"><i></i></span>
+      <span>留白放映室</span>
+    </a>
+    <div class="top-actions">
+      <div class="level-chip" aria-label="目前等級">
+        <span class="level-number" id="user-level">1</span>
+        <span><small>LEVEL</small><strong id="level-label">放映新手</strong></span>
+      </div>
+      <div class="status"><span></span> 只在這裡看</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">YOUR QUIET WATCH SPACE</p>
+      <h1>把想看的影片，<br><em>留在這裡。</em></h1>
+      <p class="intro">貼上 YouTube 連結，建立一個沒有首頁推薦、留言區與無限捲動的私人播放空間。</p>
+
+      <form id="add-form" class="add-form">
+        <label class="url-field">
+          <span class="play-icon" aria-hidden="true"></span>
+          <input id="video-url" type="text" inputmode="url" autocomplete="off" placeholder="貼上 YouTube 影片或播放清單網址" aria-label="YouTube 網址" required>
+        </label>
+        <label class="title-field">
+          <input id="video-title" type="text" autocomplete="off" maxlength="80" placeholder="自訂名稱（可留白）" aria-label="自訂名稱">
+        </label>
+        <button type="submit" class="add-button">加入片單 <span>→</span></button>
+      </form>
+      <p id="form-message" class="form-message" role="status"></p>
+    </section>
+
+    <section class="watch-layout">
+      <div class="screen-column">
+        <div id="screen" class="screen empty-screen">
+          <div id="empty-state" class="empty-state">
+            <span class="empty-mark"></span>
+            <p>你的放映室還是空的</p>
+            <small>從上方貼一支影片開始</small>
+          </div>
+          <div id="player-host" class="player-host" hidden>
+            <div id="player"></div>
+          </div>
+        </div>
+
+        <div class="now-playing">
+          <div>
+            <p class="meta-label">NOW PLAYING</p>
+            <h2 id="now-title">尚未選擇影片</h2>
+          </div>
+          <button id="focus-button" class="icon-button" type="button" aria-label="專注模式" title="專注模式">
+            <span class="focus-corners"></span>
+          </button>
+        </div>
+
+        <div class="experience-panel">
+          <div class="xp-copy">
+            <span class="xp-icon">✦</span>
+            <div>
+              <strong>觀影經驗</strong>
+              <small>完整看完一支影片可獲得 25 XP</small>
+            </div>
+          </div>
+          <div class="xp-progress">
+            <div class="xp-numbers"><span>LV.<b id="xp-level">1</b></span><span><b id="xp-current">0</b> / <b id="xp-needed">100</b> XP</span></div>
+            <div class="xp-track"><span id="xp-bar"></span></div>
+          </div>
+          <div class="watched-total"><strong id="watched-count">0</strong><small>已看完</small></div>
+        </div>
+        <div id="reward-toast" class="reward-toast" role="status" aria-live="polite">+25 XP・影片完成</div>
+      </div>
+
+      <aside class="queue-panel">
+        <div class="queue-heading">
+          <div>
+            <p class="meta-label">MY WATCHLIST</p>
+            <h2>待看片單 <span id="queue-count">0</span></h2>
+          </div>
+          <button id="clear-button" class="text-button" type="button">清空</button>
+        </div>
+        <div id="queue" class="queue" aria-live="polite"></div>
+        <div id="queue-empty" class="queue-empty">加入的影片會出現在這裡。</div>
+      </aside>
+    </section>
+  </main>
+
+  <footer>
+    <p>沒有推薦流。沒有留言。只有你選的內容。</p>
+    <p>影片由 YouTube 隱私加強模式嵌入播放</p>
+  </footer>
+
+  <template id="queue-item-template">
+    <article class="queue-item">
+      <button class="thumbnail-button" type="button" aria-label="播放影片">
+        <img class="thumbnail" alt="" loading="lazy">
+        <span class="thumb-play"></span>
+        <span class="playlist-badge">片單</span>
+      </button>
+      <button class="item-info" type="button">
+        <strong class="item-title"></strong>
+        <span class="item-kind"></span>
+      </button>
+      <button class="remove-button" type="button" aria-label="移除影片">×</button>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
